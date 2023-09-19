@@ -1,5 +1,6 @@
 import { ProviderTokens } from "src/constants";
 import { AuthService } from "./auth.service";
+import { TempAuthClient } from "src/clients/TempAuthClient";
 
 export const authProviders = [
     {
@@ -8,6 +9,6 @@ export const authProviders = [
     },
     {
         provide: "AUTH_CLIENT",
-        useValue: {} // replace with actual auth client
+        useClass: TempAuthClient
     }
 ];
