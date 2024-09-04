@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+    postgres:
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_DB: vqnt
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: password
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+            - ./sql:/docker-entrypoint-initdb.d
+        ports:
+            - "5432:5432"
+        # uncomment this if you want to wipe pgdata on composition
+        # command: ["sh", "-c", "rm -rf /var/lib/postgresql/data/* && docker-entrypoint.sh postgres"]
