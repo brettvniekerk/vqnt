@@ -1,34 +1,37 @@
-import {
-    CanActivate,
-    ExecutionContext,
-    Inject,
-    Injectable,
-    UnauthorizedException
-} from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { Request } from "express";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/entities";
+import utils from "src/utils";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) {}
-
-    private _extractToken(req: Request): string | undefined {
-        const [type, token] = req.headers.authorization?.split(" ") ?? [];
-
-        return type === "Bearer" ? token : undefined;
-    }
+    constructor(
+        private jwtService: JwtService,
+        private configService: ConfigService,
+        @InjectRepository(User)
+        private userRepository: Repository<User>
+    ) {}
 
     public async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
-        const token = this._extractToken(request);
+        const token = utils.security.extractBearerToken(request);
 
         if (!token) throw new UnauthorizedException();
 
         try {
-            const { id } = this.jwtService.decode(token) as { id: string };
+            const { email } = await this.jwtService.verifyAsync(token, {
+                secret: this.configService.getOrThrow("JWT_SECRET"),
+                ignoreExpiration: false
+            });
 
-            // logic to check if the user exists
-            // ...
+            const user = await this.userRepository.findOneByOrFail({
+                email
+            });
+
+            request["user"] = user;
         } catch {
             throw new UnauthorizedException();
         }

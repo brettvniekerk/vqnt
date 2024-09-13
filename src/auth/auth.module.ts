@@ -1,12 +1,15 @@
 import { Module } from "@nestjs/common";
 import { AuthController } from "./auth.controller";
-import { authProviders } from "./auth.providers";
 import { JwtModule } from "@nestjs/jwt";
 import { jwtOptions } from "src/jwt.options";
+import { UserModule } from "src/user/user.module";
+import { authProviders } from "./auth.providers";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { User } from "src/entities";
 
 @Module({
-    imports: [JwtModule.registerAsync(jwtOptions)],
     controllers: [AuthController],
+    imports: [JwtModule.registerAsync(jwtOptions), TypeOrmModule.forFeature([User]), UserModule],
     providers: [...authProviders],
     exports: [...authProviders]
 })

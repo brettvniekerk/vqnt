@@ -1,20 +1,19 @@
-import { AuthDTO, SignUpDTO, UserDTO } from "./dto";
+import { UUID } from "crypto";
+import { FindOptionsWhere } from "typeorm";
+import { AuthDTO } from "./dto";
+import { User } from "./entities";
 
 export interface IRootService {
     hello(): Promise<string>;
 }
 
-export interface IAuthService {
-    signup(dto: SignUpDTO): Promise<string>; // signup and return JWT
-    login(dto: AuthDTO): Promise<string>; // login and return JWT
-    logout(jwt: string): Promise<void>; // unpack JWT and log a signout for that user
-
-    getUserByJwt(jwt: string): Promise<UserDTO>;
+export interface IUserService {
+    getUserBy(options: FindOptionsWhere<User>): Promise<User | null>;
+    saveUserInfo(data: Partial<User>): Promise<User>;
 }
 
-export interface IAuthClient {
-    signup(dto: SignUpDTO): Promise<string>; // return user id
-    login(dto: AuthDTO): Promise<string>; // return user id
-
-    findUserById(id: string): Promise<UserDTO>; // return User
+export interface IAuthService {
+    signup(dto: AuthDTO): Promise<string>;
+    login(dto: AuthDTO): Promise<string>;
+    logout(userId: UUID): Promise<boolean>;
 }

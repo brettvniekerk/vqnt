@@ -1,15 +1,11 @@
 import { Body, Controller, Inject, Post, UseGuards } from "@nestjs/common";
-import {
-    ApiOperation,
-    ApiResponse,
-    ApiSecurity,
-    ApiTags
-} from "@nestjs/swagger";
-import { AuthDTO, SignUpDTO, UserDTO } from "src/dto";
+import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ProviderTokens } from "src/constants";
+import { AuthDTO } from "src/dto";
+import { User } from "src/entities";
 import { IAuthService } from "src/interfaces";
 import { AuthGuard } from "./auth.guard";
-import { AuthTokenHeader } from "./auth.decorator";
-import { ProviderTokens } from "src/constants";
+import { AuthUser } from "./auth.decorator";
 
 @Controller("auth")
 @ApiTags("auth")
@@ -26,7 +22,7 @@ export class AuthController {
     @ApiResponse({
         type: String
     })
-    public async signup(@Body() dto: SignUpDTO): Promise<string> {
+    public async signup(@Body() dto: AuthDTO): Promise<string> {
         return this.authService.signup(dto);
     }
 
@@ -47,20 +43,7 @@ export class AuthController {
     })
     @ApiSecurity("jwt")
     @UseGuards(AuthGuard)
-    public async logout(@AuthTokenHeader() jwt: string): Promise<void> {
-        return this.authService.logout(jwt);
-    }
-
-    @Post("profile")
-    @ApiOperation({
-        summary: "Gets a user's profile information"
-    })
-    @ApiResponse({
-        type: UserDTO
-    })
-    @ApiSecurity("jwt")
-    @UseGuards(AuthGuard)
-    public async profile(@AuthTokenHeader() jwt: string): Promise<UserDTO> {
-        return this.authService.getUserByJwt(jwt);
+    public async logout(@AuthUser() user: User): Promise<boolean> {
+        return this.authService.logout(user.id);
     }
 }

@@ -1,11 +1,6 @@
-import { ExecutionContext, createParamDecorator } from "@nestjs/common";
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+import { User } from "src/entities";
 
-export const AuthTokenHeader = createParamDecorator(
-    (_, req: ExecutionContext) => {
-        const raw = req.switchToHttp().getRequest();
-        const [, token] = raw.headers.authorization?.split(" ") ?? [];
-
-        // return the token so that the decorator can be used to extract the jwt token from the request
-        return token;
-    }
-);
+export const AuthUser = createParamDecorator((_, req: ExecutionContext) => {
+    return req.switchToHttp().getRequest()["user"] as User;
+});

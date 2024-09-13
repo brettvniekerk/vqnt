@@ -1,10 +1,13 @@
 # vqnt
 
-Very Quick Nest Template
+Very Quick Nest Template.
 
-## Auth
+## Default User
 
-To implement a real auth protocol, replace `TempAuthClient` with a real client, and change the `auth.guard.ts` logic to consume that new client.
+```
+userone@email.com
+password
+```
 
 ## Wipe Schema
 

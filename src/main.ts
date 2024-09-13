@@ -9,7 +9,8 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         cors: {
             origin: "*"
-        }
+        },
+        rawBody: true
     });
 
     // disable leaking backend architecture
