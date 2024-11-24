@@ -22,7 +22,9 @@ async function bootstrap() {
     // initialize swagger
     const config = new DocumentBuilder()
         .setTitle("Very Quick Nest Template")
-        .setDescription("The Swagger interface for the Very Quick Nest Template")
+        .setDescription(
+            "The Swagger interface for the Very Quick Nest Template"
+        )
         .setVersion(process.env.npm_package_version)
         .addSecurity("jwt", {
             type: "http",
@@ -35,7 +37,9 @@ async function bootstrap() {
     // expose endpoint
     SwaggerModule.setup("swagger", app, document);
 
-    await app.listen(PORT, () => new Logger().log(`Server started @ http://localhost:${PORT}/swagger\n`));
+    await app.listen(PORT, () =>
+        new Logger().log(`Server started @ http://localhost:${PORT}/swagger\n`)
+    );
 }
 
 bootstrap();

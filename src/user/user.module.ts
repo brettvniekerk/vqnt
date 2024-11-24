@@ -4,9 +4,14 @@ import { JwtModule } from "@nestjs/jwt";
 import { jwtOptions } from "src/jwt.options";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "src/entities";
+import { UserController } from "./user.controller";
 
 @Module({
-    imports: [JwtModule.registerAsync(jwtOptions), TypeOrmModule.forFeature([User])],
+    controllers: [UserController],
+    imports: [
+        JwtModule.registerAsync(jwtOptions),
+        TypeOrmModule.forFeature([User])
+    ],
     providers: [...userProviders],
     exports: [...userProviders]
 })

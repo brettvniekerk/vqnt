@@ -1,11 +1,16 @@
 import { Body, Controller, Inject, Post, UseGuards } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
-import { ProviderTokens } from "src/constants";
-import { AuthDTO } from "src/dto";
+import {
+    ApiOperation,
+    ApiResponse,
+    ApiSecurity,
+    ApiTags
+} from "@nestjs/swagger";
+import { ProviderTokens, SecurityTokens } from "src/constants";
+import { LoginDTO, SignupDTO } from "src/dto";
 import { User } from "src/entities";
 import { IAuthService } from "src/interfaces";
-import { AuthGuard } from "./auth.guard";
-import { AuthUser } from "./auth.decorator";
+import { ExistingUser } from "src/user/user.decorator";
+import { ExistingUserGuard } from "src/user/user.guard";
 
 @Controller("auth")
 @ApiTags("auth")
@@ -17,13 +22,13 @@ export class AuthController {
 
     @Post("signup")
     @ApiOperation({
-        summary: "Sign up a user"
+        summary: "Signs up a new user"
     })
     @ApiResponse({
         type: String
     })
-    public async signup(@Body() dto: AuthDTO): Promise<string> {
-        return this.authService.signup(dto);
+    public async signup(@Body() data: SignupDTO): Promise<string> {
+        return this.authService.signup(data);
     }
 
     @Post("login")
@@ -33,17 +38,20 @@ export class AuthController {
     @ApiResponse({
         type: String
     })
-    public async login(@Body() dto: AuthDTO): Promise<string> {
-        return this.authService.login(dto);
+    public async login(@Body() data: LoginDTO): Promise<string> {
+        return this.authService.login(data);
     }
 
     @Post("logout")
     @ApiOperation({
-        summary: "Logs out a user"
+        summary: "Logs out the current user"
     })
-    @ApiSecurity("jwt")
-    @UseGuards(AuthGuard)
-    public async logout(@AuthUser() user: User): Promise<boolean> {
-        return this.authService.logout(user.id);
+    @ApiResponse({
+        type: Boolean
+    })
+    @ApiSecurity(SecurityTokens.JWT)
+    @UseGuards(ExistingUserGuard)
+    public async logout(@ExistingUser() user: User): Promise<boolean> {
+        return this.authService.logout(user);
     }
 }

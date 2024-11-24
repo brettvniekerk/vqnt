@@ -9,7 +9,11 @@ import { User } from "src/entities";
 
 @Module({
     controllers: [AuthController],
-    imports: [JwtModule.registerAsync(jwtOptions), TypeOrmModule.forFeature([User]), UserModule],
+    imports: [
+        JwtModule.registerAsync(jwtOptions),
+        TypeOrmModule.forFeature([User]),
+        UserModule
+    ],
     providers: [...authProviders],
     exports: [...authProviders]
 })

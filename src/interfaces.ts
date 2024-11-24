@@ -1,19 +1,25 @@
-import { UUID } from "crypto";
-import { FindOptionsWhere } from "typeorm";
-import { AuthDTO } from "./dto";
-import { User } from "./entities";
+import { FindManyOptions, FindOptionsWhere } from "typeorm";
+import { RootEntity, User } from "./entities";
+import { SignupDTO, LoginDTO } from "./dto";
 
 export interface IRootService {
     hello(): Promise<string>;
 }
 
-export interface IUserService {
-    getUserBy(options: FindOptionsWhere<User>): Promise<User | null>;
-    saveUserInfo(data: Partial<User>): Promise<User>;
+export interface IEntityService<E extends RootEntity> {
+    getOneBy(options: FindOptionsWhere<E>): Promise<E | null>;
+    getManyBy(options: FindOptionsWhere<E>): Promise<Array<E>>;
+    findBy(options: FindManyOptions<E>): Promise<Array<E>>;
+
+    save(entity: E, data: Partial<E>): Promise<E>;
+
+    remove(...entities: Array<E>): Promise<Array<E>>;
 }
 
 export interface IAuthService {
-    signup(dto: AuthDTO): Promise<string>;
-    login(dto: AuthDTO): Promise<string>;
-    logout(userId: UUID): Promise<boolean>;
+    signup(dto: SignupDTO): Promise<string>;
+    login(dto: LoginDTO): Promise<string>;
+    logout(user: User): Promise<boolean>;
 }
+
+export interface IUserService extends IEntityService<User> {}

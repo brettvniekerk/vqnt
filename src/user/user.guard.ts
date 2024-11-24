@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from "@nestjs/common";
+import {
+    Injectable,
+    CanActivate,
+    ExecutionContext,
+    UnauthorizedException
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -7,7 +12,7 @@ import utils from "src/utils";
 import { Repository } from "typeorm";
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class ExistingUserGuard implements CanActivate {
     constructor(
         private jwtService: JwtService,
         private configService: ConfigService,

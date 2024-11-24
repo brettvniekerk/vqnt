@@ -1,8 +1,14 @@
 import { IsDate, IsEmail, IsOptional, IsString, IsUUID } from "class-validator";
 import { UUID } from "crypto";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 
-class RootEntity {
+export class RootEntity {
     @PrimaryGeneratedColumn("uuid")
     @IsUUID()
     id: UUID;

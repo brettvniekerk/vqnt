@@ -3,3 +3,7 @@ export enum ProviderTokens {
     IAuthService = "IAuthService",
     IUserService = "IUserService"
 }
+
+export enum SecurityTokens {
+    JWT = "jwt"
+}

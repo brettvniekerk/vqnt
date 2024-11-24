@@ -1,5 +1,6 @@
 import * as bcrypt from "bcrypt";
 import { Request } from "express";
+import { User } from "src/entities";
 
 export const hash = async (str: string, rounds: number): Promise<string> =>
     new Promise((res, rej) => {
@@ -23,4 +24,8 @@ export const extractBearerToken = (request: Request): string | undefined => {
     const [type, token] = request.headers.authorization?.split(" ") ?? [];
 
     return type === "Bearer" ? token : undefined;
+};
+
+export const extractUser = (request: Request): User | undefined => {
+    return request["user"] ?? undefined;
 };
