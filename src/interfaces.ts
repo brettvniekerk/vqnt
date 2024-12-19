@@ -1,5 +1,5 @@
 import { FindManyOptions, FindOptionsWhere } from "typeorm";
-import { RootEntity, User } from "./entities";
+import { Profile, RootEntity, User } from "./entities";
 import { SignupDTO, LoginDTO } from "./dto";
 
 export interface IRootService {
@@ -23,3 +23,5 @@ export interface IAuthService {
 }
 
 export interface IUserService extends IEntityService<User> {}
+
+export interface IProfileService extends IEntityService<Profile> {}

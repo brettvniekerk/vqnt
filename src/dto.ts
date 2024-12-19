@@ -8,7 +8,7 @@ import {
     IsUUID,
     Matches
 } from "class-validator";
-import { BCRYPT_REGEX } from "./regex";
+import { ALPHANUMERIC, BCRYPT_REGEX, NAMES } from "./regex";
 import { UUID } from "crypto";
 
 // * thanks https://patorjk.com/software/taag/#p=display&f=Big
@@ -38,6 +38,9 @@ export class LoginDTO {
 export class SignupDTO extends LoginDTO {
     @ApiProperty()
     @IsString()
+    @Matches(ALPHANUMERIC, {
+        message: "Usernames can only contain alphanumeric characters"
+    })
     @IsNotEmpty()
     username: string;
 }
@@ -63,6 +66,42 @@ export class PatchUserDTO {
     password?: string;
 }
 
+// ! profile
+
+export class PatchProfileDTO {
+    @ApiProperty({
+        required: false
+    })
+    @IsString()
+    @Matches(ALPHANUMERIC, {
+        message: "Usernames can only contain alphanumeric characters"
+    })
+    @IsOptional()
+    username?: string;
+
+    @ApiProperty({
+        required: false
+    })
+    @IsString()
+    @Matches(NAMES, {
+        message:
+            "Names can only contain alphabetical characters, spaces, and hyphens"
+    })
+    @IsOptional()
+    firstName?: string;
+
+    @ApiProperty({
+        required: false
+    })
+    @IsString()
+    @Matches(NAMES, {
+        message:
+            "Names can only contain alphabetical characters, spaces, and hyphens"
+    })
+    @IsOptional()
+    lastName?: string;
+}
+
 // !   ______       _   _ _           _____ _______ ____  _
 // !  |  ____|     | | (_) |         |  __ \__   __/ __ \( )
 // !  | |__   _ __ | |_ _| |_ _   _  | |  | | | | | |  | |/ ___
@@ -82,6 +121,14 @@ export class UserDTO {
     id: UUID;
 
     @ApiProperty()
+    @IsString()
+    @Matches(ALPHANUMERIC, {
+        message: "Usernames can only contain alphanumeric characters"
+    })
+    @IsNotEmpty()
+    username: string;
+
+    @ApiProperty()
     @IsEmail()
     @IsNotEmpty()
     email: string;
@@ -96,4 +143,55 @@ export class UpdatedUserDTO extends UserDTO {
     @IsString()
     @IsNotEmpty()
     jwt: string;
+}
+
+// ! profile
+
+export class ProfileDTO {
+    @ApiProperty()
+    @IsUUID()
+    @IsNotEmpty()
+    id: UUID;
+
+    @ApiProperty()
+    @IsUUID()
+    @IsNotEmpty()
+    userId: UUID;
+
+    @ApiProperty()
+    @IsString()
+    @Matches(ALPHANUMERIC, {
+        message: "Usernames can only contain alphanumeric characters"
+    })
+    @IsNotEmpty()
+    username: string;
+
+    @ApiProperty({
+        required: false
+    })
+    @IsString()
+    @Matches(NAMES, {
+        message:
+            "Names can only contain alphabetical characters, spaces, and hyphens"
+    })
+    @IsOptional()
+    firstName?: string;
+
+    @ApiProperty({
+        required: false
+    })
+    @IsString()
+    @Matches(NAMES, {
+        message:
+            "Names can only contain alphabetical characters, spaces, and hyphens"
+    })
+    @IsOptional()
+    lastName?: string;
+
+    @ApiProperty({
+        required: false
+    })
+    @IsDate()
+    @IsOptional()
+    updatedAt?: Date;
 }

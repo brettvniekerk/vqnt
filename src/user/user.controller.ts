@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -16,7 +17,7 @@ import {
 import { ProviderTokens, SecurityTokens } from "src/constants";
 import { PatchUserDTO, UpdatedUserDTO, UserDTO } from "src/dto";
 import { User } from "src/entities";
-import { IUserService } from "src/interfaces";
+import { IProfileService, IUserService } from "src/interfaces";
 import { ExistingUserGuard } from "./user.guard";
 import { ExistingUser } from "./user.decorator";
 import { JwtService } from "@nestjs/jwt";
@@ -27,7 +28,9 @@ export class UserController {
     constructor(
         private jwtService: JwtService,
         @Inject(ProviderTokens.IUserService)
-        private userService: IUserService
+        private userService: IUserService,
+        @Inject(ProviderTokens.IProfileServie)
+        private profileService: IProfileService
     ) {}
 
     // ! utils
@@ -36,6 +39,7 @@ export class UserController {
         return {
             id: entity.id,
             email: entity.email.toLowerCase(),
+            username: entity.profile.username,
             createdAt: entity.createdAt
         };
     }
@@ -64,6 +68,17 @@ export class UserController {
     @ApiSecurity(SecurityTokens.JWT)
     @UseGuards(ExistingUserGuard)
     public async getUser(@ExistingUser() user: User): Promise<UserDTO> {
+        const profile = await this.profileService.getOneBy({
+            userId: user.id
+        });
+
+        if (!profile)
+            throw new BadRequestException(
+                `Failed to get profile for user ${user.id}`
+            );
+
+        user["profile"] = profile;
+
         return this._entityToDTO(user);
     }
 

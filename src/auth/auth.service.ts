@@ -9,8 +9,8 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { ProviderTokens } from "src/constants";
 import { LoginDTO, SignupDTO } from "src/dto";
-import { User } from "src/entities";
-import { IAuthService, IUserService } from "src/interfaces";
+import { Profile, User } from "src/entities";
+import { IAuthService, IProfileService, IUserService } from "src/interfaces";
 import utils from "src/utils";
 
 @Injectable()
@@ -21,7 +21,9 @@ export class AuthService implements IAuthService {
         private jwtService: JwtService,
         private configService: ConfigService,
         @Inject(ProviderTokens.IUserService)
-        private userService: IUserService
+        private userService: IUserService,
+        @Inject(ProviderTokens.IProfileServie)
+        private profileService: IProfileService
     ) {}
 
     // ! utils
@@ -40,6 +42,13 @@ export class AuthService implements IAuthService {
 
         if (existingUser)
             throw new UnauthorizedException("User already exists");
+
+        const existingUsername = await this.profileService.getOneBy({
+            username: dto.username
+        });
+
+        if (existingUsername)
+            throw new UnauthorizedException("Username already exists");
     }
 
     // ! public
@@ -57,9 +66,16 @@ export class AuthService implements IAuthService {
             password: hashedPassword
         });
 
+        const newProfile = await this.profileService.save({} as Profile, {
+            userId: newUser.id,
+            username: dto.username
+        });
+
         const token = await this._createJwtFromEntity(newUser);
 
-        this.logger.log(`New user ${newUser.id} (${newUser.email}) signed up`);
+        this.logger.log(
+            `New user ${newProfile.username} (${newUser.email}) signed up`
+        );
 
         return token;
     }

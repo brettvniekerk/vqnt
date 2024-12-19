@@ -11,6 +11,14 @@ VALUES
     '$2b$10$d9M4122rw/eMWjp7rn8x3OrOb.QuYAifa5BzgApqSVXvc2/uZAHU.'
   );
 
+INSERT INTO
+  profiles ("userId", "username")
+VALUES
+  (
+    'ff20e786-2b07-4443-8c72-d603edf30ffc',
+    'userone'
+  );
+
 END;
 
 COMMIT;
